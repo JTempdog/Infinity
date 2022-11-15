@@ -8,8 +8,8 @@ client.once(Events.ClientReady, c => {
 });
 
 // SERVER DETAILS
-const vcID = '1038647491375136839';
-const categoryID = '815648620719112194';
+const vcID = '1038647491375136839'; // LiveID  TestID 1038647491375136839
+const categoryID = '815648620719112194'; // LiveID  TestID 815648620719112194
 
 let vcChannel;
 client.on(Events.VoiceStateUpdate, async (oldVS, newVS) => {
@@ -51,4 +51,4 @@ client.on(Events.MessageCreate, async message => {
   }
 });
 
-client.login(test);
+client.login(token);
