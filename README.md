@@ -17,13 +17,13 @@ List all warnings. `!check`<br>
 Check your own warnings. `!warnings`
 
 **TicketBot** - A Discord bot for allowing members to create tickets or sumbit anonymous tips to get in touch with staff.<br>
-This bot uses interactions to either create a private channel between a member and staff in a Discord server or<br>
-sends a DM to the member, allowing them to submit an anonymous tip that will be sent to a channel in the Discord server.<br>
+This bot uses interactions to either create a private channel between a member and staff in a Discord server or sends a DM to the member, 
+allowing them to submit an anonymous tip that will be sent to a channel in the Discord server.<br>
 Place the inital message to allow members to interact. `!ticket`
 
 **VcBot** - A Discord bot to eliminate too many voice channels and allow for easy creation on the fly.<br>
-This bot requires at least one voice channel and when members join, they will be moved to a newly created voice channel<br>
-where they can change the name of the channel as well as set the limit for amount of members able to join.<br>
+This bot requires at least one voice channel and when members join, they will be moved to a newly created voice channel where they can 
+change the name of the channel as well as set the limit for amount of members able to join.<br>
 Change the name of the channel. `!vcname <name>`<br>
 Change the limit of members. `!vclimit <number>`
 
