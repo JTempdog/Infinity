@@ -16,10 +16,10 @@ Check a member's warnings. `!check @member`<br>
 List all warnings. `!check`<br>
 Check your own warnings. `!warnings`
 
-**TicketBot** - A Discord bot for allowing members to create tickets or sumbit anonymous tips to get in touch with staff.<br>
+**TicketBot** - A Discord bot for allowing members to create tickets or submit anonymous tips to get in touch with staff.<br>
 This bot uses interactions to either create a private channel between a member and staff in a Discord server or sends a DM to the member, 
-allowing them to submit an anonymous tip that will be sent to a channel in the Discord server.<br>
-Place the inital message to allow members to interact. `!ticket`
+allowing them to submit an anonymous tip that will be sent to a member in the Discord server.<br>
+Place the initial message to allow members to interact. `!ticket`
 
 **VcBot** - A Discord bot to eliminate too many voice channels and allow for easy creation on the fly.<br>
 This bot requires at least one voice channel and when members join, they will be moved to a newly created voice channel where they can 
@@ -27,12 +27,16 @@ change the name of the channel as well as set the limit for amount of members ab
 Change the name of the channel. `!vcname <name>`<br>
 Change the limit of members. `!vclimit <number>`
 
+**WelcomeBot** - A Discord bot that is similar to the TicketBot, used for allowing new members to choose which way they would like to join.<br>
+This bot, like the TicketBot, uses interactions to create a private channel between a member and staff in a Discord server depending on which of the two options they choose.<br>
+Place the initial message to allow members to interact. `!welcome`
+
 In order to recreate these Discord bots, each folder needs a config.json file containing a bot token.<br>
 Then while in the folder directories, use NPM to install Discord.js from the command prompt.<br>
 `npm install discord.js`
 
 The **EventBot** needs @discordjs/voice installed as well. `npm install @discordjs/voice`<br>
-The **RuleBot** and the **TicketBot** both need Sequelize installed as well. `npm install sequelize`
+The **RuleBot**, **WelcomeBot** and the **TicketBot** both need Sequelize installed as well. `npm install sequelize`
 
 See https://www.npmjs.com/ for more info.
 
