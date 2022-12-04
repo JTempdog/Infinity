@@ -149,6 +149,8 @@ function getTime(ms) {
 
 // SERVER DETAILS
 const leaderRoleId = '1004468530760134656'; // TestID 815813424721690664 // LiveID 1004468530760134656
+const modRoleId = '657989638807486468'; // TestID 815813586525224970 // LiveID 657989638807486468
+const adminRoleId = '1004251716901937172'; // TestID  // LiveID 1004251716901937172
 const channelId = '730155393367408852'; // TestID 892249369049464862 // LiveID 730155393367408852
 
 client.on('ready', async () => {
@@ -745,155 +747,179 @@ client.on('messageCreate', async message => {
   }
 
   // !check
-  if (args[0] == '!check' && message.member.roles.cache.has(leaderRoleId)) {
-    let member;
-    if (message.mentions.members.first()) {
-      member = message.mentions.members.first();
-    } else {
-      member = message.guild.members.cache.find(member => member.id == args[1]);
-    }
-
-    if (!member && args[1]) {
-      const embed = new EmbedBuilder()
-        .setColor('Red')
-        .setTitle('Not a Valid Member')
-        .setDescription('Please either tag member or use their ID.');
-
-      return message.channel.send({ embeds: [embed] });
-    }
-
-    if (member) {
-      const warningList = await Warnings.findAll({
-        where: {
-          playerid: member.id,
-        },
-        include: [{
-          model: Rules,
-        }]
-      });
-      const actives = await Warnings.count({
-        where: {
-          isactive: true,
-          playerid: member.id,
-        }
-      });
-      const warningString = warningList.map(w => {
-        if (w.summary && w.time > 0 && w.screenshot) {
-          return w.rule.description ? `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}\n**Summary:** ${w.summary} **Time:** ${getTime(w.time)}\n**Screenshot:** ${w.screenshot}` : `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}\n**Summary:** ${w.summary} **Time:** ${getTime(w.time)}\n**Screenshot:** ${w.screenshot}`;
-        } else if (w.summary && w.time > 0) {
-          return w.rule.description ? `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}\n**Summary:** ${w.summary} **Time:** ${getTime(w.time)}` : `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}\n**Summary:** ${w.summary} **Time:** ${getTime(w.time)}`;
-        } else if (w.summary && w.screenshot) {
-          return w.rule.description ? `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}\n**Summary:** ${w.summary}\n**Screenshot:** ${w.screenshot}` : `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}\n**Summary:** ${w.summary}\n**Screenshot:** ${w.screenshot}`;
-        } else if (w.time > 0 && w.screenshot) {
-          return w.rule.description ? `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}\n**Time:** ${getTime(w.time)}\n**Screenshot:** ${w.screenshot}` : `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}\n**Time:** ${getTime(w.time)}\n**Screenshot:** ${w.screenshot}`;
-        } else if (w.summary) {
-          return w.rule.description ? `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}\n**Summary:** ${w.summary}` : `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}\n**Summary:** ${w.summary}`;
-        } else if (w.time > 0) {
-          return w.rule.description ? `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}\n**Time:** ${getTime(w.time)}` : `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}\n**Time:** ${getTime(w.time)}`;
-        } else if (w.screenshot) {
-          return w.rule.description ? `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}\n**Screenshot:** ${w.screenshot}` : `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}\n**Screenshot:** ${w.screenshot}`;
-        } else {
-          return w.rule.description ? `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}` : `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}`;
-        }
-      }).join('\n\n') || 'No warnings.';
-  
-      const embed = new EmbedBuilder()
-        .setColor('Blue')
-        .setTitle('Warnings')
-        .setDescription(warningString);
-  
-      if (actives >= 3) {
-        embed.setImage('attachment://images/3.png');
-        return message.channel.send({ embeds: [embed], files: ['./images/3.png'] });
-      } else if (actives == 2) {
-        embed.setImage('attachment://images/2.png');
-        return message.channel.send({ embeds: [embed], files: ['./images/2.png'] });
-      } else if (actives == 1) {
-        embed.setImage('attachment://images/1.png');
-        return message.channel.send({ embeds: [embed], files: ['./images/1.png'] });
+  if (args[0] == '!check') {
+    if (message.member.roles.cache.has(leaderRoleId) || message.member.roles.cache.has(modRoleId) || message.member.roles.cache.has(adminRoleId)) {
+      let member;
+      if (message.mentions.members.first()) {
+        member = message.mentions.members.first();
       } else {
-        embed.setImage('attachment://images/0.png');
-        return message.channel.send({ embeds: [embed], files: ['./images/0.png'] });
+        member = message.guild.members.cache.find(member => member.id == args[1]);
       }
-    } else {
-      const warningList = await Warnings.findAll({
-        include: [{
-          model: Rules,
-        }]
-      });
-
-      let index = 1;
-      for (let i = 0; i < warningList.length; i += 10) {
-        const warningString = warningList.sort((a, b) => a.playerid - b.playerid).slice(i, i + 10).map(w => {
+  
+      if (!member && args[1]) {
+        const embed = new EmbedBuilder()
+          .setColor('Red')
+          .setTitle('Not a Valid Member')
+          .setDescription('Please either tag member or use their ID.');
+  
+        return message.channel.send({ embeds: [embed] });
+      }
+  
+      if (member) {
+        const warningList = await Warnings.findAll({
+          where: {
+            playerid: member.id,
+          },
+          include: [{
+            model: Rules,
+          }]
+        });
+        const actives = await Warnings.count({
+          where: {
+            isactive: true,
+            playerid: member.id,
+          }
+        });
+        const warningString = warningList.map(w => {
+          const player = message.guild.members.cache.find(member => member.id == w.playerid);
+          let memberName;
+          if (player) {
+            if (player.nickname) {
+              memberName = player.nickname;
+            } else {
+              memberName = player.user.username;
+            }
+          }
+  
           if (w.summary && w.time > 0 && w.screenshot) {
-            return w.rule.description ? `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}\n**Summary:** ${w.summary} **Time:** ${getTime(w.time)}\n**Screenshot:** ${w.screenshot}` : `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}\n**Summary:** ${w.summary} **Time:** ${getTime(w.time)}\n**Screenshot:** ${w.screenshot}`;
+            return w.rule.description ? `**ID**: ${w.id} **Member:** \`${memberName} - ${player.id}\`\n **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}\n**Summary:** ${w.summary} **Time:** ${getTime(w.time)}\n**Screenshot:** ${w.screenshot}` : `**ID**: ${w.id} **Member:** \`${memberName} - ${player.id}\`\n **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}\n**Summary:** ${w.summary} **Time:** ${getTime(w.time)}\n**Screenshot:** ${w.screenshot}`;
           } else if (w.summary && w.time > 0) {
-            return w.rule.description ? `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}\n**Summary:** ${w.summary} **Time:** ${getTime(w.time)}` : `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}\n**Summary:** ${w.summary} **Time:** ${getTime(w.time)}`;
+            return w.rule.description ? `**ID**: ${w.id} **Member:** \`${memberName} - ${player.id}\`\n **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}\n**Summary:** ${w.summary} **Time:** ${getTime(w.time)}` : `**ID**: ${w.id} **Member:** \`${memberName} - ${player.id}\`\n **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}\n**Summary:** ${w.summary} **Time:** ${getTime(w.time)}`;
           } else if (w.summary && w.screenshot) {
-            return w.rule.description ? `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}\n**Summary:** ${w.summary}\n**Screenshot:** ${w.screenshot}` : `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}\n**Summary:** ${w.summary}\n**Screenshot:** ${w.screenshot}`;
+            return w.rule.description ? `**ID**: ${w.id} **Member:** \`${memberName} - ${player.id}\`\n **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}\n**Summary:** ${w.summary}\n**Screenshot:** ${w.screenshot}` : `**ID**: ${w.id} **Member:** \`${memberName} - ${player.id}\`\n **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}\n**Summary:** ${w.summary}\n**Screenshot:** ${w.screenshot}`;
           } else if (w.time > 0 && w.screenshot) {
-            return w.rule.description ? `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}\n**Time:** ${getTime(w.time)}\n**Screenshot:** ${w.screenshot}` : `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}\n**Time:** ${getTime(w.time)}\n**Screenshot:** ${w.screenshot}`;
+            return w.rule.description ? `**ID**: ${w.id} **Member:** \`${memberName} - ${player.id}\`\n**Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}\n**Time:** ${getTime(w.time)}\n**Screenshot:** ${w.screenshot}` : `**ID**: ${w.id} **Member:** \`${memberName} - ${player.id}\`\n **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}\n**Time:** ${getTime(w.time)}\n**Screenshot:** ${w.screenshot}`;
           } else if (w.summary) {
-            return w.rule.description ? `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}\n**Summary:** ${w.summary}` : `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}\n**Summary:** ${w.summary}`;
+            return w.rule.description ? `**ID**: ${w.id} **Member:** \`${memberName} - ${player.id}\`\n **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}\n**Summary:** ${w.summary}` : `**ID**: ${w.id} **Member:** \`${memberName} - ${player.id}\`\n **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}\n**Summary:** ${w.summary}`;
           } else if (w.time > 0) {
-            return w.rule.description ? `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}\n**Time:** ${getTime(w.time)}` : `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}\n**Time:** ${getTime(w.time)}`;
+            return w.rule.description ? `**ID**: ${w.id} **Member:** \`${memberName} - ${player.id}\`\n **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}\n**Time:** ${getTime(w.time)}` : `**ID**: ${w.id} **Member:** \`${memberName} - ${player.id}\`\n **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}\n**Time:** ${getTime(w.time)}`;
           } else if (w.screenshot) {
-            return w.rule.description ? `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}\n**Screenshot:** ${w.screenshot}` : `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}\n**Screenshot:** ${w.screenshot}`;
+            return w.rule.description ? `**ID**: ${w.id} **Member:** \`${memberName} - ${player.id}\`\n **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}\n**Screenshot:** ${w.screenshot}` : `**ID**: ${w.id} **Member:** \`${memberName} - ${player.id}\`\n **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}\n**Screenshot:** ${w.screenshot}`;
           } else {
-            return w.rule.description ? `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}` : `**ID**: ${w.id} **Member:** <@${w.playerid}> **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}`;
+            return w.rule.description ? `**ID**: ${w.id} **Member:** \`${memberName} - ${player.id}\`\n **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}` : `**ID**: ${w.id} **Member:** \`${memberName} - ${player.id}\`\n **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}`;
           }
         }).join('\n\n') || 'No warnings.';
-
-        let footerText;
-        if (warningList.length <= 10) {
-          footerText = 1;
-        } else {
-          footerText = Math.ceil(warningList.length / 10);
-        }
-
+    
         const embed = new EmbedBuilder()
           .setColor('Blue')
           .setTitle('Warnings')
-          .setDescription(warningString)
-          .setFooter({ text: `Page ${index} of ${footerText}` });
-        
-        console.log(embeds.length);
-        embeds.push(embed);
-        index += 1;
+          .setDescription(warningString);
+    
+        if (actives >= 3) {
+          embed.setImage('attachment://images/3.png');
+          return message.channel.send({ embeds: [embed], files: ['./images/3.png'] });
+        } else if (actives == 2) {
+          embed.setImage('attachment://images/2.png');
+          return message.channel.send({ embeds: [embed], files: ['./images/2.png'] });
+        } else if (actives == 1) {
+          embed.setImage('attachment://images/1.png');
+          return message.channel.send({ embeds: [embed], files: ['./images/1.png'] });
+        } else {
+          embed.setImage('attachment://images/0.png');
+          return message.channel.send({ embeds: [embed], files: ['./images/0.png'] });
+        }
+      } else {
+        const warningList = await Warnings.findAll({
+          include: [{
+            model: Rules,
+          }]
+        });
+  
+        let index = 1;
+        for (let i = 0; i < warningList.length; i += 10) {
+          const warningString = warningList.sort((a, b) => a.playerid - b.playerid).slice(i, i + 10).map(w => {
+            const player = message.guild.members.cache.find(member => member.id == w.playerid);
+            let memberId;
+            let memberName;
+            if (player) {
+              memberId = player.id;
+              if (player.nickname) {
+                memberName = player.nickname;
+              } else {
+                memberName = player.user.username;
+              }
+            }
+  
+            if (w.summary && w.time > 0 && w.screenshot) {
+              return w.rule.description ? `**ID**: ${w.id} **Member:** \`${memberName} - ${memberId}\`\n **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}\n**Summary:** ${w.summary} **Time:** ${getTime(w.time)}\n**Screenshot:** ${w.screenshot}` : `**ID**: ${w.id} **Member:** \`${memberName} - ${memberId}\`\n **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}\n**Summary:** ${w.summary} **Time:** ${getTime(w.time)}\n**Screenshot:** ${w.screenshot}`;
+            } else if (w.summary && w.time > 0) {
+              return w.rule.description ? `**ID**: ${w.id} **Member:** \`${memberName} - ${memberId}\`\n **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}\n**Summary:** ${w.summary} **Time:** ${getTime(w.time)}` : `**ID**: ${w.id} **Member:** \`${memberName} - ${memberId}\`\n **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}\n**Summary:** ${w.summary} **Time:** ${getTime(w.time)}`;
+            } else if (w.summary && w.screenshot) {
+              return w.rule.description ? `**ID**: ${w.id} **Member:** \`${memberName} - ${memberId}\`\n **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}\n**Summary:** ${w.summary}\n**Screenshot:** ${w.screenshot}` : `**ID**: ${w.id} **Member:** \`${memberName} - ${memberId}\`\n **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}\n**Summary:** ${w.summary}\n**Screenshot:** ${w.screenshot}`;
+            } else if (w.time > 0 && w.screenshot) {
+              return w.rule.description ? `**ID**: ${w.id} **Member:** \`${memberName} - ${memberId}\`\n **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}\n**Time:** ${getTime(w.time)}\n**Screenshot:** ${w.screenshot}` : `**ID**: ${w.id} **Member:** \`${memberName} - ${memberId}\`\n **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}\n**Time:** ${getTime(w.time)}\n**Screenshot:** ${w.screenshot}`;
+            } else if (w.summary) {
+              return w.rule.description ? `**ID**: ${w.id} **Member:** \`${memberName} - ${memberId}\`\n **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}\n**Summary:** ${w.summary}` : `**ID**: ${w.id} **Member:** \`${memberName} - ${memberId}\`\n **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}\n**Summary:** ${w.summary}`;
+            } else if (w.time > 0) {
+              return w.rule.description ? `**ID**: ${w.id} **Member:** \`${memberName} - ${memberId}\`\n **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}\n**Time:** ${getTime(w.time)}` : `**ID**: ${w.id} **Member:** \`${memberName} - ${memberId}\`\n **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}\n**Time:** ${getTime(w.time)}`;
+            } else if (w.screenshot) {
+              return w.rule.description ? `**ID**: ${w.id} **Member:** \`${memberName} - ${memberId}\`\n **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}\n**Screenshot:** ${w.screenshot}` : `**ID**: ${w.id} **Member:** \`${memberName} - ${memberId}\`\n **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}\n**Screenshot:** ${w.screenshot}`;
+            } else {
+              return w.rule.description ? `**ID**: ${w.id} **Member:** \`${memberName} - ${memberId}\`\n **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name} - ${w.rule.description}` : `**ID**: ${w.id} **Member:** \`${memberName} - ${memberId}\`\n **Active:** ${w.isactive}\n**Rule:** ${w.rule.number} - ${w.rule.name}`;
+            }
+          }).join('\n\n') || 'No warnings.';
+  
+          let footerText;
+          if (warningList.length <= 10) {
+            footerText = 1;
+          } else {
+            footerText = Math.ceil(warningList.length / 10);
+          }
+  
+          const embed = new EmbedBuilder()
+            .setColor('Blue')
+            .setTitle('Warnings')
+            .setDescription(warningString)
+            .setFooter({ text: `Page ${index} of ${footerText}` });
+          
+          console.log(embeds.length);
+          embeds.push(embed);
+          index += 1;
+        }
+    
+        const row = new ActionRowBuilder()
+          .addComponents(
+            new ButtonBuilder()
+              .setCustomId('previous')
+              .setLabel('Previous')
+              .setStyle('Primary')
+              .setDisabled(true),
+            new ButtonBuilder()
+              .setCustomId('next')
+              .setLabel('Next')
+              .setStyle('Primary')
+              .setDisabled(embeds.length == 1),
+          );
+        const row2 = new ActionRowBuilder()
+          .addComponents(
+            new ButtonBuilder()
+              .setCustomId('previous')
+              .setLabel('Previous')
+              .setStyle('Primary')
+              .setDisabled(true),
+            new ButtonBuilder()
+              .setCustomId('next')
+              .setLabel('Next')
+              .setStyle('Primary')
+              .setDisabled(true),
+          );
+    
+        page = 0;
+        const initMsg = await message.channel.send({ embeds: [embeds[0]], components: [row] });
+        setTimeout(async () => {
+          return await initMsg.edit({ components: [row2] });
+        }, 60000);
       }
-  
-      const row = new ActionRowBuilder()
-        .addComponents(
-          new ButtonBuilder()
-            .setCustomId('previous')
-            .setLabel('Previous')
-            .setStyle('Primary')
-            .setDisabled(true),
-          new ButtonBuilder()
-            .setCustomId('next')
-            .setLabel('Next')
-            .setStyle('Primary')
-            .setDisabled(embeds.length == 1),
-        );
-      const row2 = new ActionRowBuilder()
-        .addComponents(
-          new ButtonBuilder()
-            .setCustomId('previous')
-            .setLabel('Previous')
-            .setStyle('Primary')
-            .setDisabled(true),
-          new ButtonBuilder()
-            .setCustomId('next')
-            .setLabel('Next')
-            .setStyle('Primary')
-            .setDisabled(true),
-        );
-  
-      page = 0;
-      const initMsg = await message.channel.send({ embeds: [embeds[0]], components: [row] });
-      setTimeout(async () => {
-        return await initMsg.edit({ components: [row2] });
-      }, 60000);
     }
   }
 
@@ -967,7 +993,7 @@ client.on('messageCreate', async message => {
       .setTitle('Commands')
       .setDescription('`!addrule`\nAdds a new rule with a rule number, name and description\n**Example:** !addrule 1; Spamming; Sending the same text in chat over and over\n\n`!editrule`\nEdits a existing rule using the rule number\n**Example:** !editrule 1; Spamming Text; Sending the same content in chat repeatedly\n\n`!removerule`\nRemoves a existing rule using a rule number\n**Example:** !removerule 1\n\n`!rules`\nLists all the rules stored in the bot\n\n`!warn`\nAdds a new warning with a member\'s tag or ID, rule number, summary, time and screenshot\n**Example:** !warn @member; 1; Would not stop typing "Why?"; 1d; https://imgur.com/a/Nb8Oqdk \n\n`!removewarn`\nRemoves a existing warning using a warning ID\n**Example:** !removewarn 1\n\n`!check`\nLists all warnings stored in the bot or list ones for a certain member using a member\'s tag or ID\n**Example:** !check @member\n\n`!warnings`\nDM\'s the member that uses this command with a summary of their warnings');
 
-    return message.author.send({ embeds: [embed] });
+    return message.channel.send({ embeds: [embed] });
   }
 });
 
