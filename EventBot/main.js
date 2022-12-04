@@ -31,15 +31,20 @@ async function checkForEvents() {
       genChannel.send(`**__${event.name} - begins now__**\n${event.description}`);
       event.setStatus('ACTIVE');
 
-      const vChannel = event.channel;
-      const connection = joinVoiceChannel({
-        channelId: vChannel.id,
-        guildId: vChannel.guild.id,
-        adapterCreator: vChannel.guild.voiceAdapterCreator,
-      });
-      setTimeout(() => {
-        connection.destroy();
-      }, 3600000)
+      try {
+        const vChannel = event.channel;
+        const connection = joinVoiceChannel({
+          channelId: vChannel.id,
+          guildId: vChannel.guild.id,
+          adapterCreator: vChannel.guild.voiceAdapterCreator,
+        });
+        setTimeout(() => {
+          connection.destroy();
+        }, 3600000)
+      } catch {
+        console.log('Failed voice connection for the hour.');
+        return;
+      }
     }
   });
 
