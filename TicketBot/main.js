@@ -37,7 +37,7 @@ const staffRoleTag = '<@&846886887074562059>';
 const staffRoleId = '846886887074562059'; // LiveID 846886887074562059 TestID 815813424721690664
 
 const guildId = '657989577075720195'; // LiveID 657989577075720195 TestID 815648620719112192
-const anonChannelId = '1015323854488485968'; // LiveID  TestID 1015323854488485968
+const dmId = '230152815207514114'; // LiveID 230152815207514114 TestID 488872809414656000
 
 client.on('ready', () => {
   Tickets.sync();
@@ -60,8 +60,8 @@ client.on('messageCreate', message => {
 
     const embed = new MessageEmbed()
       .setColor('WHITE')
-      .setTitle('INF Ticket System')
-      .setDescription('Open a ticket to get connected with the staff team!');
+      .setTitle('Having a problem? Want to leave a tip?')
+      .setDescription('Let us know what\'s going on! Get connected.\n\n__Create a ticket__ to speak with the staff team\nOR __forward an anonymous tip__ to the team!');
     
     message.delete();
     message.channel.send({ embeds: [embed], components: [row] });
@@ -69,16 +69,16 @@ client.on('messageCreate', message => {
 
   if (message.guild == null && message.author != client.user) {
     const guildToSend = client.guilds.cache.find(g => g.id == guildId);
-    const anonChannel = guildToSend.channels.cache.find(c => c.id == anonChannelId);
+    const dmChannel = guildToSend.members.cache.find(c => c.id == dmId);
     const embed = new MessageEmbed()
       .setColor('WHITE')
       .setTitle('New Anonymous Tip');
     
-    anonChannel.send({ embeds: [embed] }).then(anonChannel.send(message.content));
+    dmChannel.send({ embeds: [embed] }).then(dmChannel.send(message.content));
 
     const embed2 = new MessageEmbed()
       .setColor('GREEN')
-      .setDescription('Thank you! Your tip has been anonymously forwarded to the staff team!');
+      .setDescription('Thank you! Your tip has been anonymously forwarded to Ms Seren!');
     message.channel.send({ embeds: [embed2] });
   }
 });
@@ -90,7 +90,7 @@ client.on('interactionCreate', async interaction => {
     const embed = new MessageEmbed()
       .setColor('WHITE')
       .setTitle('INF Anonymous Tip System')
-      .setDescription('Send anonymous tips by typing your tip here and it will be forwarded to the staff team!');
+      .setDescription('Send anonymous tips by typing your tip here and it will be forwarded to Ms Seren!\n**If you do not provide enough information your tip may not properly be resolved.**');
 
     interaction.update({});
     interaction.member.send({ embeds: [embed] });
