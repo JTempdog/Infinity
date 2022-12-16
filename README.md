@@ -31,11 +31,11 @@ Change the limit of members. `!vclimit <number>`
 This bot, like the TicketBot, uses interactions to create a private channel between a member and staff in a Discord server depending on which of the two options they choose.<br>
 Place the initial message to allow members to interact. `!welcome`
 
-**TwitterBot** - A Discord bot that takes streams tweets from Twitter using the Twitter API and posts them into Discord.<br>
+**TwitterBot** - A Discord bot that streams tweets from Twitter using the Twitter API and posts them into Discord.<br>
 This bot will automatically send the link to a tweet from a specified Twitter account when it is posted on Twitter right into a chosen Discord channel.
 
-**MerchBot** - A Discord bot for sending a message twice everyday at 12am and 12pm EST that advertises the message and tags a specified channel.<br>
-This bot creates a job in order to send the chosen message into a Discord channel at certain times.
+**MerchBot** - A Discord bot for sending a message twice everyday that advertises the message and tags a specified channel.<br>
+This bot creates a job in order to send the chosen message into a Discord channel everyday at 12am and 12pm EST.
 
 In order to recreate these Discord bots, each folder needs a config.json file containing a bot token.<br>
 Then while in the folder directories, use NPM to install Discord.js from the command prompt.<br>
