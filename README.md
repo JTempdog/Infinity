@@ -49,6 +49,7 @@ The **MerchBot** needs cron installed as well. `npm install cron`
 See https://www.npmjs.com/ for more info.
 
 **Don't forget to change the ID's in the code according to your Discord server!**<br>
+**Also change the account ID in the code according to your Twitter account!**<br>
 Now you should be able to start the bots using either a code runner on your IDE or PM2 from the command prompt.<br>
 `pm2 start main.js`
 
