@@ -11,42 +11,40 @@ async function checkForEvents() {
   const genChannel = guild.channels.cache.find(c => c.name.toLowerCase() == 'general-chat' && c.type == 'GUILD_TEXT');
   guildEvents = await guild.scheduledEvents.fetch();
 
-  if (!guildEvents) {
-    return;
-  }
+  if (guildEvents.size != 0) {
+    guildEvents.forEach(event => {
+      const msUntil = event.scheduledStartAt.getTime() - Date.now();
   
-  guildEvents.forEach(event => {
-    const msUntil = event.scheduledStartAt.getTime() - Date.now();
-
-    // 1 HOUR
-    if (msUntil >= 3570000 && msUntil <= 3630000) {
-      genChannel.send(`**__${event.name} - begins in 1 hour__**\n${event.description}`); 
-    }
-    // 30 MINUTES
-    if (msUntil >= 1770000 && msUntil <= 1830000) {
-      genChannel.send(`**__${event.name} - begins in 30 minutes__**\n${event.description}`);
-    }
-    // NOW
-    if (msUntil >= -30000 && msUntil <= 30000) {
-      genChannel.send(`**__${event.name} - begins now__**\n${event.description}`);
-      event.setStatus('ACTIVE');
-
-      try {
-        const vChannel = event.channel;
-        const connection = joinVoiceChannel({
-          channelId: vChannel.id,
-          guildId: vChannel.guild.id,
-          adapterCreator: vChannel.guild.voiceAdapterCreator,
-        });
-        setTimeout(() => {
-          connection.destroy();
-        }, 3600000)
-      } catch {
-        console.log('Failed voice connection for the hour.');
-        return;
+      // 1 HOUR
+      if (msUntil >= 3570000 && msUntil <= 3630000) {
+        genChannel.send(`**__${event.name} - begins in 1 hour__**\n${event.description}`); 
       }
-    }
-  });
+      // 30 MINUTES
+      if (msUntil >= 1770000 && msUntil <= 1830000) {
+        genChannel.send(`**__${event.name} - begins in 30 minutes__**\n${event.description}`);
+      }
+      // NOW
+      if (msUntil >= -30000 && msUntil <= 30000) {
+        genChannel.send(`**__${event.name} - begins now__**\n${event.description}`);
+        event.setStatus('ACTIVE');
+  
+        try {
+          const vChannel = event.channel;
+          const connection = joinVoiceChannel({
+            channelId: vChannel.id,
+            guildId: vChannel.guild.id,
+            adapterCreator: vChannel.guild.voiceAdapterCreator,
+          });
+          setTimeout(() => {
+            connection.destroy();
+          }, 3600000)
+        } catch {
+          console.log('Failed voice connection for the hour.');
+          return;
+        }
+      }
+    });
+  }
 
   setTimeout(() => {
     checkForEvents();
