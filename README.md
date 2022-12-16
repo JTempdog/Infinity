@@ -42,7 +42,7 @@ Then while in the folder directories, use NPM to install Discord.js from the com
 `npm install discord.js`
 
 The **EventBot** needs @discordjs/voice installed as well. `npm install @discordjs/voice`<br>
-The **RuleBot**, **WelcomeBot** and the **TicketBot** both need Sequelize installed as well. `npm install sequelize`<br>
+The **RuleBot**, **WelcomeBot** and the **TicketBot** all need sequelize installed as well. `npm install sequelize`<br>
 The **TwitterBot** needs twitter-v2 installed as well. `npm install twitter-v2`<br>
 The **MerchBot** needs cron installed as well. `npm install cron`
 
