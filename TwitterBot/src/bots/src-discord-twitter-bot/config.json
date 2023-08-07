@@ -1,0 +1,14 @@
+[
+  {
+    "channelId": "1050518755794489375",
+    "delay": 60000,
+    "randomDelay": 0,
+    "embed": true,
+    "spoiler": false,
+    "parameters": {
+      "q": "from:@Infinity_PvM exclude:replies exclude:retweets",
+      "result_type": "recent",
+      "count": 1
+    }
+  }
+]
