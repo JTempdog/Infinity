@@ -133,5 +133,3 @@ client.on('messageCreate', message => {
 });
 
 client.login(token);
-
-// create some kind of try/catch block for 500 server errors from Discord?
