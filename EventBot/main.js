@@ -116,10 +116,10 @@ client.on('messageCreate', message => {
         } else {
           events += `**${event.name}** begins in *${getTime(msUntil)}*\n`;
         }
-        size++;
       } else if (msUntil < 0) {
         events += `**${event.name}** is happening *right now*!\n`
       }
+      size++;
     });
 
     const embed = new MessageEmbed()
@@ -133,3 +133,5 @@ client.on('messageCreate', message => {
 });
 
 client.login(token);
+
+// create some kind of try/catch block for 500 server errors from Discord?
