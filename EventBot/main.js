@@ -1,11 +1,16 @@
 // Written by: Tempdog
+/*
+Ensure you have versions 13.9.0 for discord.js and 0.11.0 for @discordjs/voice to use MessageEmbed and Intents.
+Otherwise, replace them with EmbedBuilder and GatewayIntentBits - Osik
+*/ 
 const { Client, Intents, MessageEmbed } = require('discord.js');
 const { joinVoiceChannel } = require('@discordjs/voice');
-const { token, test } = require('./config.json');
+const { token } = require('./config.json');
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] });
 
 let guildEvents;
 
+// Check for events every hour, and send periodic reminders leading up to it if any
 async function checkForEvents() {
   const guild = client.guilds.cache.first();
   const genChannel = guild.channels.cache.find(c => c.name.toLowerCase() == 'general-chat' && c.type == 'GUILD_TEXT');
@@ -28,6 +33,7 @@ async function checkForEvents() {
         genChannel.send(`**__${event.name} - begins now__**\n${event.description}`);
         event.setStatus('ACTIVE');
   
+        // Join the event's voice channel and then disconnect after an hour 
         try {
           const vChannel = event.channel;
           const connection = joinVoiceChannel({
@@ -37,6 +43,7 @@ async function checkForEvents() {
           });
           setTimeout(() => {
             connection.destroy();
+            // By Discord default, event will also auto-end a few mins after all people leave the vc
           }, 3600000)
         } catch {
           console.log('Failed voice connection for the hour.');
@@ -87,6 +94,7 @@ client.on('ready', () => {
   checkForEvents();
 });
 
+// Text command to display the list of the upcoming events
 client.on('messageCreate', message => {
   if (message.content == '!events' || message.content == '!gm wwd') {
     let events = '';
@@ -108,8 +116,10 @@ client.on('messageCreate', message => {
         } else {
           events += `**${event.name}** begins in *${getTime(msUntil)}*\n`;
         }
-        size++;
+      } else if (msUntil < 0) {
+        events += `**${event.name}** is happening *right now*!\n`
       }
+      size++;
     });
 
     const embed = new MessageEmbed()
