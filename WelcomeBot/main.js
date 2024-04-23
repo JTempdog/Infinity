@@ -143,7 +143,7 @@ client.on('interactionCreate', async interaction => {
       const embed = new MessageEmbed()
         .setColor('WHITE')
         .setTitle('INF Welcome System')
-        .setDescription("Welcome! A staff member will be with you as soon as they can.\nTo get started, please __provide us with your RSN & how you found us__.");
+        .setDescription("Welcome! A staff member will be with you as soon as they can.\nTo get started, please __provide us with your RSN, how you found us & confirm that you are 18+__.");
       channel.send({ content: `${staffRoleTag} ${interaction.member}`, embeds: [embed], components: [row] });
 
       // Reply to the button click and direct user to new ticket
@@ -198,7 +198,7 @@ client.on('interactionCreate', async interaction => {
       const embed = new MessageEmbed()
         .setColor('WHITE')
         .setTitle('INF Welcome System')
-        .setDescription("Welcome! A staff member will be with you as soon as they can.\nTo get started, please __provide us with your RSN & how you found us__.");
+        .setDescription("Welcome! A staff member will be with you as soon as they can.\nTo get started, please __provide us with your RSN, how you found us & confirm that you are 18+__.");
       channel.send({ content: `${staffRoleTag} ${interaction.member}`, embeds: [embed], components: [row] });
 
       // Reply to the button click and direct user to new ticket
